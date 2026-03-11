@@ -304,11 +304,18 @@ components:
   otelCollector:
     mode: daemonset+gateway
 
-ingress:
+gateway:
   enabled: true
-  className: nginx
+  className: traefik  # any Gateway API-compatible controller (traefik, envoy, cilium, istio)
   domain: observability.company.com
-  tls: true
+  tls:
+    enabled: true
+    source: cert-manager
+    issuer: letsencrypt-prod
+  hosts:
+    grafana: grafana.observability.company.com
+    prometheus: prometheus.observability.company.com   # optional
+    alertmanager: alertmanager.observability.company.com  # optional
 ```
 
 ### Preflight Checks
@@ -533,7 +540,7 @@ E2E tests validate the full installation lifecycle: binary build, `install --mod
 
 ### v1.0.0 — Distribution & Ecosystem
 
-- [ ] Ingress and TLS configuration for all components
+- [ ] Gateway API integration with TLS for all components (replaces deprecated ingress-nginx)
 - [ ] Helm chart publication to OCI registry
 - [ ] Tempo integration for distributed tracing
 - [ ] Dedicated documentation site
