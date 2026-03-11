@@ -37,11 +37,19 @@ func startupComponents() []Component {
 			Enabled:     true,
 		},
 		{
+			Name:        "Loki",
+			ReleaseName: "k8scope-loki",
+			ChartPath:   "charts/loki",
+			ValuesPath:  "values/startup/loki.yaml",
+			Order:       2,
+			Enabled:     true,
+		},
+		{
 			Name:        "Grafana",
 			ReleaseName: "k8scope-grafana",
 			ChartPath:   "charts/grafana",
 			ValuesPath:  "values/startup/grafana.yaml",
-			Order:       2,
+			Order:       3,
 			Enabled:     true,
 		},
 	}

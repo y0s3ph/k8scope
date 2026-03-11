@@ -6,30 +6,28 @@ import (
 
 func TestForModeStartup(t *testing.T) {
 	components := ForMode("startup", nil)
-	if len(components) < 2 {
-		t.Fatalf("expected at least 2 components for startup mode, got %d", len(components))
+	if len(components) < 3 {
+		t.Fatalf("expected at least 3 components for startup mode, got %d", len(components))
 	}
 
-	prom := components[0]
-	if prom.Name != "Prometheus" {
-		t.Errorf("expected first component to be Prometheus, got %s", prom.Name)
+	expected := []struct {
+		name        string
+		releaseName string
+	}{
+		{"Prometheus", "k8scope-prometheus"},
+		{"Loki", "k8scope-loki"},
+		{"Grafana", "k8scope-grafana"},
 	}
-	if prom.ReleaseName != "k8scope-prometheus" {
-		t.Errorf("unexpected release name: %s", prom.ReleaseName)
-	}
-	if !prom.Enabled {
-		t.Error("expected Prometheus to be enabled")
-	}
-
-	grafana := components[1]
-	if grafana.Name != "Grafana" {
-		t.Errorf("expected second component to be Grafana, got %s", grafana.Name)
-	}
-	if grafana.ReleaseName != "k8scope-grafana" {
-		t.Errorf("unexpected release name: %s", grafana.ReleaseName)
-	}
-	if grafana.ValuesPath != "values/startup/grafana.yaml" {
-		t.Errorf("unexpected values path: %s", grafana.ValuesPath)
+	for i, e := range expected {
+		if components[i].Name != e.name {
+			t.Errorf("component[%d]: expected %s, got %s", i, e.name, components[i].Name)
+		}
+		if components[i].ReleaseName != e.releaseName {
+			t.Errorf("component[%d]: expected release %s, got %s", i, e.releaseName, components[i].ReleaseName)
+		}
+		if !components[i].Enabled {
+			t.Errorf("component[%d] %s: expected enabled", i, e.name)
+		}
 	}
 }
 
