@@ -1,0 +1,73 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - main: ./cmd/k8scope
+    binary: k8scope
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/y0s3ph/k8scope/internal/cli.Version={{.Version}}
+      - -X github.com/y0s3ph/k8scope/internal/cli.Commit={{.Commit}}
+      - -X github.com/y0s3ph/k8scope/internal/cli.Date={{.Date}}
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+
+dockers:
+  - image_templates:
+      - "ghcr.io/y0s3ph/k8scope:{{ .Version }}-amd64"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--build-arg=VERSION={{ .Version }}"
+      - "--build-arg=COMMIT={{ .Commit }}"
+      - "--build-arg=DATE={{ .Date }}"
+    dockerfile: Dockerfile
+    goarch: amd64
+  - image_templates:
+      - "ghcr.io/y0s3ph/k8scope:{{ .Version }}-arm64"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64"
+      - "--build-arg=VERSION={{ .Version }}"
+      - "--build-arg=COMMIT={{ .Commit }}"
+      - "--build-arg=DATE={{ .Date }}"
+    dockerfile: Dockerfile
+    goarch: arm64
+
+docker_manifests:
+  - name_template: "ghcr.io/y0s3ph/k8scope:{{ .Version }}"
+    image_templates:
+      - "ghcr.io/y0s3ph/k8scope:{{ .Version }}-amd64"
+      - "ghcr.io/y0s3ph/k8scope:{{ .Version }}-arm64"
+  - name_template: "ghcr.io/y0s3ph/k8scope:latest"
+    image_templates:
+      - "ghcr.io/y0s3ph/k8scope:{{ .Version }}-amd64"
+      - "ghcr.io/y0s3ph/k8scope:{{ .Version }}-arm64"
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
