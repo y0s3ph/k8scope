@@ -1,0 +1,38 @@
+groups:
+  - name: k8scope.info
+    rules:
+      - alert: KubeDeploymentRollingUpdate
+        expr: |
+          kube_deployment_status_observed_generation != kube_deployment_metadata_generation
+        for: 0m
+        labels:
+          severity: info
+          k8scope: "true"
+        annotations:
+          summary: "Deployment {{ $labels.namespace }}/{{ $labels.deployment }} is rolling out"
+          description: "Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has a pending generation update, indicating a rollout is in progress."
+          runbook_url: "https://github.com/y0s3ph/k8scope/blob/main/docs/runbooks/KubeDeploymentRollingUpdate.md"
+
+      - alert: KubeNamespaceTerminating
+        expr: |
+          kube_namespace_status_phase{phase="Terminating"} == 1
+        for: 5m
+        labels:
+          severity: info
+          k8scope: "true"
+        annotations:
+          summary: "Namespace {{ $labels.namespace }} is terminating"
+          description: "Namespace {{ $labels.namespace }} has been in Terminating state for more than 5 minutes. This may indicate stuck finalizers."
+          runbook_url: "https://github.com/y0s3ph/k8scope/blob/main/docs/runbooks/KubeNamespaceTerminating.md"
+
+      - alert: PrometheusRuleFailures
+        expr: |
+          rate(prometheus_rule_evaluation_failures_total[5m]) > 0
+        for: 10m
+        labels:
+          severity: info
+          k8scope: "true"
+        annotations:
+          summary: "Prometheus rule evaluation failures detected"
+          description: "Prometheus is failing to evaluate {{ $value | humanize }} rules per second. Check Prometheus logs for details."
+          runbook_url: "https://github.com/y0s3ph/k8scope/blob/main/docs/runbooks/PrometheusRuleFailures.md"

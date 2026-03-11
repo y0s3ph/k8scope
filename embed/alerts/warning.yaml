@@ -1,0 +1,100 @@
+groups:
+  - name: k8scope.warning
+    rules:
+      - alert: KubePodNotReady
+        expr: |
+          min_over_time(kube_pod_status_ready{condition="true"}[15m]) == 0
+          and kube_pod_status_phase{phase=~"Running|Pending"} == 1
+        for: 15m
+        labels:
+          severity: warning
+          k8scope: "true"
+        annotations:
+          summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is not ready"
+          description: "Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a not-ready state for more than 15 minutes."
+          runbook_url: "https://github.com/y0s3ph/k8scope/blob/main/docs/runbooks/KubePodNotReady.md"
+
+      - alert: KubeDeploymentReplicasMismatch
+        expr: |
+          kube_deployment_spec_replicas != kube_deployment_status_available_replicas
+        for: 15m
+        labels:
+          severity: warning
+          k8scope: "true"
+        annotations:
+          summary: "Deployment {{ $labels.namespace }}/{{ $labels.deployment }} replicas mismatch"
+          description: "Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has {{ $value }} available replicas, which doesn't match the desired count."
+          runbook_url: "https://github.com/y0s3ph/k8scope/blob/main/docs/runbooks/KubeDeploymentReplicasMismatch.md"
+
+      - alert: KubeContainerOOMKilled
+        expr: |
+          increase(kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}[1h]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          k8scope: "true"
+        annotations:
+          summary: "Container {{ $labels.container }} OOMKilled in {{ $labels.namespace }}/{{ $labels.pod }}"
+          description: "Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} was OOMKilled in the last hour. Consider increasing memory limits."
+          runbook_url: "https://github.com/y0s3ph/k8scope/blob/main/docs/runbooks/KubeContainerOOMKilled.md"
+
+      - alert: KubeHPAMaxedOut
+        expr: |
+          kube_horizontalpodautoscaler_status_current_replicas == kube_horizontalpodautoscaler_spec_max_replicas
+          and kube_horizontalpodautoscaler_spec_max_replicas > 1
+        for: 30m
+        labels:
+          severity: warning
+          k8scope: "true"
+        annotations:
+          summary: "HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler }} is at max replicas"
+          description: "HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler }} has been at maximum replicas ({{ $value }}) for 30 minutes. Consider increasing max replicas."
+          runbook_url: "https://github.com/y0s3ph/k8scope/blob/main/docs/runbooks/KubeHPAMaxedOut.md"
+
+      - alert: NodeHighCPU
+        expr: |
+          100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 30m
+        labels:
+          severity: warning
+          k8scope: "true"
+        annotations:
+          summary: "Node {{ $labels.instance }} CPU usage is above 80%"
+          description: "Node {{ $labels.instance }} CPU usage has been above 80% for 30 minutes (current: {{ $value | printf \"%.1f\" }}%)."
+          runbook_url: "https://github.com/y0s3ph/k8scope/blob/main/docs/runbooks/NodeHighCPU.md"
+
+      - alert: NodeHighMemory
+        expr: |
+          (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 85
+        for: 30m
+        labels:
+          severity: warning
+          k8scope: "true"
+        annotations:
+          summary: "Node {{ $labels.instance }} memory usage is above 85%"
+          description: "Node {{ $labels.instance }} memory usage has been above 85% for 30 minutes (current: {{ $value | printf \"%.1f\" }}%)."
+          runbook_url: "https://github.com/y0s3ph/k8scope/blob/main/docs/runbooks/NodeHighMemory.md"
+
+      - alert: NodeDiskPressure
+        expr: |
+          (1 - node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 > 80
+        for: 15m
+        labels:
+          severity: warning
+          k8scope: "true"
+        annotations:
+          summary: "Node {{ $labels.instance }} disk usage above 80%"
+          description: "Root filesystem on {{ $labels.instance }} is at {{ $value | printf \"%.1f\" }}% capacity."
+          runbook_url: "https://github.com/y0s3ph/k8scope/blob/main/docs/runbooks/NodeDiskPressure.md"
+
+      - alert: LokiIngestionErrors
+        expr: |
+          rate(loki_distributor_ingester_append_failures_total[5m]) > 0
+        for: 10m
+        labels:
+          severity: warning
+          k8scope: "true"
+        annotations:
+          summary: "Loki is experiencing ingestion errors"
+          description: "Loki ingester append failures detected. Log data may be lost."
+          runbook_url: "https://github.com/y0s3ph/k8scope/blob/main/docs/runbooks/LokiIngestionErrors.md"
