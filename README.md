@@ -30,39 +30,42 @@ Setting up observability on Kubernetes means:
 
 ---
 
-## 📑 Table of Contents
+<details>
+<summary><strong>Table of Contents</strong></summary>
 
-- [🏗️ Architecture](#️-architecture)
-- [🎯 Deployment Modes](#-deployment-modes)
-- [⚡ Quick Start](#-quick-start)
+- [Architecture](#️-architecture)
+- [Deployment Modes](#-deployment-modes)
+- [Quick Start](#-quick-start)
   - [Installation](#installation)
   - [Basic Usage](#basic-usage)
-- [📦 What Gets Installed](#-what-gets-installed)
+- [What Gets Installed](#-what-gets-installed)
   - [Core Components](#core-components)
   - [OpenTelemetry Collector Modes](#opentelemetry-collector-modes)
-- [📊 Curated Dashboards](#-curated-dashboards)
-- [🚨 Curated Alerting Rules](#-curated-alerting-rules)
+- [Curated Dashboards](#-curated-dashboards)
+- [Curated Alerting Rules](#-curated-alerting-rules)
   - [Critical Alerts](#critical-alerts)
   - [Warning Alerts](#warning-alerts)
   - [Info Alerts](#info-alerts)
-- [⚙️ Configuration](#️-configuration)
+- [Configuration](#️-configuration)
   - [CLI Flags](#cli-flags)
   - [Configuration File](#configuration-file)
   - [Preflight Checks](#preflight-checks)
-- [🔌 Connecting Your Applications](#-connecting-your-applications)
+- [Connecting Your Applications](#-connecting-your-applications)
   - [Sending Metrics via OTLP](#sending-metrics-via-otlp)
   - [Sending Logs via OTLP](#sending-logs-via-otlp)
-- [🔧 Component Defaults by Mode](#-component-defaults-by-mode)
+- [Component Defaults by Mode](#-component-defaults-by-mode)
   - [Prometheus](#prometheus)
   - [Grafana](#grafana)
   - [Loki](#loki)
   - [Alertmanager](#alertmanager)
   - [OpenTelemetry Collector](#opentelemetry-collector)
-- [🚢 For GitOps Users](#-for-gitops-users)
-- [🛠️ Building from Source](#️-building-from-source)
-- [🧪 Testing](#-testing)
-- [🗺️ Roadmap](#️-roadmap)
-- [📄 License](#-license)
+- [For GitOps Users](#-for-gitops-users)
+- [Building from Source](#️-building-from-source)
+- [Testing](#-testing)
+- [Roadmap](#️-roadmap)
+- [License](#-license)
+
+</details>
 
 ---
 
