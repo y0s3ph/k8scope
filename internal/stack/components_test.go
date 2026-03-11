@@ -6,17 +6,20 @@ import (
 
 func TestForModeStartup(t *testing.T) {
 	components := ForMode("startup", nil)
-	if len(components) < 3 {
-		t.Fatalf("expected at least 3 components for startup mode, got %d", len(components))
+	if len(components) < 5 {
+		t.Fatalf("expected at least 5 components for startup mode, got %d", len(components))
 	}
 
 	expected := []struct {
 		name        string
 		releaseName string
+		enabled     bool
 	}{
-		{"Prometheus", "k8scope-prometheus"},
-		{"Loki", "k8scope-loki"},
-		{"Grafana", "k8scope-grafana"},
+		{"Prometheus", "k8scope-prometheus", true},
+		{"Loki", "k8scope-loki", true},
+		{"Alertmanager", "k8scope-alertmanager", false}, // bundled in kube-prometheus-stack
+		{"OTel Collector", "k8scope-otel", true},
+		{"Grafana", "k8scope-grafana", true},
 	}
 	for i, e := range expected {
 		if components[i].Name != e.name {
@@ -25,8 +28,8 @@ func TestForModeStartup(t *testing.T) {
 		if components[i].ReleaseName != e.releaseName {
 			t.Errorf("component[%d]: expected release %s, got %s", i, e.releaseName, components[i].ReleaseName)
 		}
-		if !components[i].Enabled {
-			t.Errorf("component[%d] %s: expected enabled", i, e.name)
+		if components[i].Enabled != e.enabled {
+			t.Errorf("component[%d] %s: expected enabled=%v, got %v", i, e.name, e.enabled, components[i].Enabled)
 		}
 	}
 }

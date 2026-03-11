@@ -45,11 +45,27 @@ func startupComponents() []Component {
 			Enabled:     true,
 		},
 		{
+			Name:        "Alertmanager",
+			ReleaseName: "k8scope-alertmanager",
+			ChartPath:   "",
+			ValuesPath:  "",
+			Order:       3,
+			Enabled:     false, // deployed via kube-prometheus-stack
+		},
+		{
+			Name:        "OTel Collector",
+			ReleaseName: "k8scope-otel",
+			ChartPath:   "charts/opentelemetry-collector",
+			ValuesPath:  "values/startup/otel-collector.yaml",
+			Order:       4,
+			Enabled:     true,
+		},
+		{
 			Name:        "Grafana",
 			ReleaseName: "k8scope-grafana",
 			ChartPath:   "charts/grafana",
 			ValuesPath:  "values/startup/grafana.yaml",
-			Order:       3,
+			Order:       5,
 			Enabled:     true,
 		},
 	}
