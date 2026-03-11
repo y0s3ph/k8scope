@@ -73,16 +73,31 @@ Setting up observability on Kubernetes means:
 
 k8scope deploys a hybrid observability architecture where Prometheus handles Kubernetes infrastructure metrics via scraping, while OpenTelemetry Collector acts as the unified ingestion layer for application telemetry via OTLP:
 
-```
-                         ┌──→ Prometheus (metrics storage)
-                         │
-Apps ──── OTLP ──→ OTel  ├──→ Loki (log storage)          ──→ Grafana
-                  Collector                                     ↑
-                         └──→ Tempo (traces - roadmap)          │
-                                                                │
-K8s infra ──→ Prometheus (scrape) ──────────────────────────────┘
-                    │
-                    └──→ Alertmanager ──→ Slack / PagerDuty / Email
+```mermaid
+flowchart LR
+    Apps["🖥️ Applications"]
+    K8s["☸️ K8s Infrastructure"]
+    OTel["OpenTelemetry\nCollector"]
+    Prom["Prometheus"]
+    Loki["Loki"]
+    Tempo["Tempo\n(roadmap)"]
+    Grafana["📊 Grafana"]
+    AM["Alertmanager"]
+    Notify["📢 Slack / PagerDuty\n/ Email"]
+
+    Apps -- "OTLP" --> OTel
+    OTel -- "remote write" --> Prom
+    OTel -- "OTLP/HTTP" --> Loki
+    OTel -. "traces" .-> Tempo
+
+    K8s -- "scrape" --> Prom
+
+    Prom -- "query" --> Grafana
+    Loki -- "query" --> Grafana
+    Tempo -. "query" .-> Grafana
+
+    Prom -- "alerts" --> AM
+    AM --> Notify
 ```
 
 **Signal flow:**
