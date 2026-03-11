@@ -7,8 +7,10 @@ import (
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
+	"github.com/y0s3ph/k8scope/embed"
 	"github.com/y0s3ph/k8scope/internal/config"
 	"github.com/y0s3ph/k8scope/internal/preflight"
+	"github.com/y0s3ph/k8scope/internal/stack"
 )
 
 var installCmd = &cobra.Command{
@@ -58,13 +60,18 @@ func runInstall(cmd *cobra.Command, args []string) error {
 
 	printInstallPlan(mode, namespace)
 
-	if dryRun {
-		fmt.Println("\nNo changes applied (dry-run mode).")
-		return nil
+	fmt.Println()
+
+	orch := stack.NewOrchestrator(kubeconfig, namespace, embed.Assets)
+	if err := orch.Install(context.Background(), modeName, dryRun); err != nil {
+		return err
 	}
 
-	// TODO: wire up HelmInstaller for actual deployments (Phase 2 issues #4-#8)
-	fmt.Println("\nInstallation engine ready. Component charts not yet embedded (see Phase 2 issues).")
+	if dryRun {
+		fmt.Println("\nNo changes applied (dry-run mode).")
+	} else {
+		fmt.Printf("\nk8scope stack installed successfully in namespace %q.\n", namespace)
+	}
 	return nil
 }
 
