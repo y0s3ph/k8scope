@@ -114,12 +114,34 @@ k8scope install --mode production --namespace monitoring
 k8scope install --config k8scope.yaml
 ```
 
+Config file auto-discovery order: `.k8scope.yaml` (current dir) > `$HOME/.k8scope.yaml`.
+
 Example `k8scope.yaml`:
 
 ```yaml
 mode: production
 namespace: monitoring
 kubeconfig: ~/.kube/config
+
+components:
+  prometheus:
+    replicas: 2
+    storage: 50Gi
+    retention: 30d
+  grafana:
+    replicas: 2
+  loki:
+    replicas: 3
+    storage: 50Gi
+    retention: 30d
+  otelCollector:
+    mode: daemonset+gateway
+
+ingress:
+  enabled: true
+  className: nginx
+  domain: observability.company.com
+  tls: true
 ```
 
 ## For GitOps Users
@@ -133,7 +155,10 @@ helm install k8scope oci://ghcr.io/y0s3ph/k8scope --values custom-values.yaml
 ## Roadmap
 
 - [x] CLI scaffolding with mode-based installation plans
-- [ ] Helm SDK integration for actual deployments
+- [x] Helm SDK installer engine (install, upgrade, uninstall, status)
+- [x] Preflight checks (cluster, version, resources, storage class)
+- [x] Configuration file loading with CLI flag override and merge semantics
+- [ ] Embed and deploy component charts (Prometheus, Grafana, Loki, Alertmanager, OTel Collector)
 - [ ] OpenTelemetry Collector pipelines per mode
 - [ ] Curated Grafana dashboards (cluster, node, pod, networking, logs)
 - [ ] Curated alerting rules by severity

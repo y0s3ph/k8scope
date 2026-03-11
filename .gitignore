@@ -1,5 +1,5 @@
 # Binaries
-k8scope
+/k8scope
 *.exe
 *.exe~
 *.dll
