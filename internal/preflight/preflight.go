@@ -91,12 +91,12 @@ func parseMemoryRequirement(s string) int64 {
 	s = strings.TrimSpace(s)
 	if strings.HasSuffix(s, "Gi") {
 		var val int64
-		fmt.Sscanf(s, "%dGi", &val)
+		_, _ = fmt.Sscanf(s, "%dGi", &val)
 		return val * 1024 * 1024 * 1024
 	}
 	if strings.HasSuffix(s, "Mi") {
 		var val int64
-		fmt.Sscanf(s, "%dMi", &val)
+		_, _ = fmt.Sscanf(s, "%dMi", &val)
 		return val * 1024 * 1024
 	}
 	return 0
@@ -106,10 +106,10 @@ func parseCPURequirement(s string) int64 {
 	s = strings.TrimSpace(s)
 	if strings.HasSuffix(s, "m") {
 		var val int64
-		fmt.Sscanf(s, "%dm", &val)
+		_, _ = fmt.Sscanf(s, "%dm", &val)
 		return val
 	}
 	var val int64
-	fmt.Sscanf(s, "%d", &val)
+	_, _ = fmt.Sscanf(s, "%d", &val)
 	return val * 1000
 }

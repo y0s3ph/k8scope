@@ -70,20 +70,20 @@ func runInstall(cmd *cobra.Command, args []string) error {
 
 func printInstallPlan(mode config.Mode, namespace string) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 4, 2, ' ', 0)
-	fmt.Fprintf(w, "Namespace:\t%s\n", namespace)
-	fmt.Fprintf(w, "Mode:\t%s\n", mode.Name)
-	fmt.Fprintf(w, "Description:\t%s\n", mode.Description)
-	fmt.Fprintln(w, "\nComponents:")
-	fmt.Fprintf(w, "  COMPONENT\tENABLED\tREPLICAS\n")
+	_, _ = fmt.Fprintf(w, "Namespace:\t%s\n", namespace)
+	_, _ = fmt.Fprintf(w, "Mode:\t%s\n", mode.Name)
+	_, _ = fmt.Fprintf(w, "Description:\t%s\n", mode.Description)
+	_, _ = fmt.Fprintln(w, "\nComponents:")
+	_, _ = fmt.Fprintf(w, "  COMPONENT\tENABLED\tREPLICAS\n")
 	for _, c := range mode.Components {
-		fmt.Fprintf(w, "  %s\t%v\t%d\n", c.Name, c.Enabled, c.Replicas)
+		_, _ = fmt.Fprintf(w, "  %s\t%v\t%d\n", c.Name, c.Enabled, c.Replicas)
 	}
 
 	if len(mode.Features) > 0 {
-		fmt.Fprintln(w, "\nFeatures:")
+		_, _ = fmt.Fprintln(w, "\nFeatures:")
 		for _, f := range mode.Features {
-			fmt.Fprintf(w, "  ✓ %s\n", f)
+			_, _ = fmt.Fprintf(w, "  ✓ %s\n", f)
 		}
 	}
-	w.Flush()
+	_ = w.Flush()
 }

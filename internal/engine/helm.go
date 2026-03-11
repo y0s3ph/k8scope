@@ -218,7 +218,7 @@ func (h *HelmInstaller) resolveChart(opts ReleaseOptions) (string, func(), error
 		return "", nil, fmt.Errorf("creating temp dir: %w", err)
 	}
 
-	cleanup := func() { os.RemoveAll(tmpDir) }
+	cleanup := func() { _ = os.RemoveAll(tmpDir) }
 
 	err = fs.WalkDir(opts.ChartFS, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
