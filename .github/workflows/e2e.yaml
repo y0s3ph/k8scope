@@ -1,0 +1,41 @@
+name: E2E
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'embed/**'
+      - 'internal/**'
+      - 'cmd/**'
+      - 'test/**'
+      - 'go.mod'
+      - 'go.sum'
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: helm/kind-action@v1
+        with:
+          config: test/e2e/testdata/kind-config.yaml
+          cluster_name: k8scope-e2e
+      - name: Run E2E tests
+        run: go test -v -tags e2e -timeout 12m ./test/e2e/...
+      - name: Diagnostic output on failure
+        if: failure()
+        run: |
+          echo "=== Pods ==="
+          kubectl get pods -A
+          echo "=== Events ==="
+          kubectl get events -n k8scope --sort-by='.lastTimestamp' | tail -30
+          echo "=== Describe failed pods ==="
+          kubectl describe pods -n k8scope --field-selector=status.phase!=Running 2>/dev/null || true
