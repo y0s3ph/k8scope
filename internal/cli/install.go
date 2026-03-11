@@ -1,12 +1,14 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 	"github.com/y0s3ph/k8scope/internal/config"
+	"github.com/y0s3ph/k8scope/internal/preflight"
 )
 
 var installCmd = &cobra.Command{
@@ -19,6 +21,7 @@ var installCmd = &cobra.Command{
 func init() {
 	installCmd.Flags().StringP("mode", "m", "", "deployment mode: dev, startup, production, enterprise (required)")
 	installCmd.Flags().Bool("dry-run", false, "show what would be installed without applying")
+	installCmd.Flags().Bool("skip-preflight", false, "skip preflight checks")
 	_ = installCmd.MarkFlagRequired("mode")
 	rootCmd.AddCommand(installCmd)
 }
@@ -26,17 +29,31 @@ func init() {
 func runInstall(cmd *cobra.Command, args []string) error {
 	modeName, _ := cmd.Flags().GetString("mode")
 	namespace, _ := cmd.Flags().GetString("namespace")
+	kubeconfig, _ := cmd.Flags().GetString("kubeconfig")
 	dryRun, _ := cmd.Flags().GetBool("dry-run")
+	skipPreflight, _ := cmd.Flags().GetBool("skip-preflight")
 
 	mode, err := config.GetMode(modeName)
 	if err != nil {
 		return err
 	}
 
+	if modeName != "dev" && !skipPreflight {
+		fmt.Printf("Preflight checks for mode %q:\n", mode.Name)
+		checkers := preflight.ForMode(modeName, kubeconfig)
+		results, ok := preflight.RunAll(context.Background(), checkers)
+		preflight.PrintResults(results)
+		fmt.Println()
+
+		if !ok {
+			return fmt.Errorf("preflight checks failed — fix the issues above or use --skip-preflight to bypass")
+		}
+	}
+
 	if dryRun {
-		fmt.Printf("🔍 Dry run: showing installation plan for mode %q\n\n", mode.Name)
+		fmt.Printf("Dry run: showing installation plan for mode %q\n\n", mode.Name)
 	} else {
-		fmt.Printf("🚀 Installing k8scope in mode %q\n\n", mode.Name)
+		fmt.Printf("Installing k8scope in mode %q\n\n", mode.Name)
 	}
 
 	printInstallPlan(mode, namespace)
@@ -46,8 +63,8 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	// TODO: actual Helm-based installation (Phase 2)
-	fmt.Println("\n⚠️  Installation engine not yet implemented. Coming soon!")
+	// TODO: wire up HelmInstaller for actual deployments (Phase 2 issues #4-#8)
+	fmt.Println("\nInstallation engine ready. Component charts not yet embedded (see Phase 2 issues).")
 	return nil
 }
 
