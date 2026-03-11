@@ -1,6 +1,9 @@
+version: "2"
+
 run:
   timeout: 5m
 
-issues:
-  exclude-dirs:
-    - embed/charts
+linters:
+  exclusions:
+    paths:
+      - embed/charts
