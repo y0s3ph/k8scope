@@ -36,6 +36,7 @@ var modes = map[string]Mode{
 			{Name: "Grafana", Enabled: true, Replicas: 1},
 			{Name: "Loki", Enabled: true, Replicas: 1},
 			{Name: "Alertmanager", Enabled: false, Replicas: 0},
+			{Name: "OTel Collector", Enabled: false, Replicas: 0},
 		},
 		Features: []string{
 			"Ephemeral storage",
@@ -51,6 +52,7 @@ var modes = map[string]Mode{
 			{Name: "Grafana", Enabled: true, Replicas: 1},
 			{Name: "Loki", Enabled: true, Replicas: 1},
 			{Name: "Alertmanager", Enabled: true, Replicas: 1},
+			{Name: "OTel Collector", Enabled: true, Replicas: 1},
 		},
 		Features: []string{
 			"Persistent storage (10Gi default)",
@@ -58,6 +60,7 @@ var modes = map[string]Mode{
 			"Basic alerting rules",
 			"Pre-loaded dashboards",
 			"Ingress-ready",
+			"OTel Collector as DaemonSet for log/metric collection",
 		},
 	},
 	"production": {
@@ -68,6 +71,7 @@ var modes = map[string]Mode{
 			{Name: "Grafana", Enabled: true, Replicas: 2},
 			{Name: "Loki", Enabled: true, Replicas: 3},
 			{Name: "Alertmanager", Enabled: true, Replicas: 3},
+			{Name: "OTel Collector", Enabled: true, Replicas: 2},
 		},
 		Features: []string{
 			"High availability",
@@ -77,6 +81,8 @@ var modes = map[string]Mode{
 			"Pod anti-affinity",
 			"Resource limits enforced",
 			"PodDisruptionBudgets",
+			"OTel Collector DaemonSet + Gateway for app telemetry",
+			"OTLP ingestion endpoint for metrics, logs, and traces",
 		},
 	},
 	"enterprise": {
@@ -87,6 +93,7 @@ var modes = map[string]Mode{
 			{Name: "Grafana", Enabled: true, Replicas: 3},
 			{Name: "Loki", Enabled: true, Replicas: 3},
 			{Name: "Alertmanager", Enabled: true, Replicas: 3},
+			{Name: "OTel Collector", Enabled: true, Replicas: 3},
 		},
 		Features: []string{
 			"Everything in production mode",
@@ -96,6 +103,8 @@ var modes = map[string]Mode{
 			"Audit logging",
 			"90-day retention",
 			"Horizontal Pod Autoscaling",
+			"OTel Collector Gateway with tenant-aware routing",
+			"Sampling and filtering pipelines",
 		},
 	},
 }
