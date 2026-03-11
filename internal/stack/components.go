@@ -36,6 +36,14 @@ func startupComponents() []Component {
 			Order:       1,
 			Enabled:     true,
 		},
+		{
+			Name:        "Grafana",
+			ReleaseName: "k8scope-grafana",
+			ChartPath:   "charts/grafana",
+			ValuesPath:  "values/startup/grafana.yaml",
+			Order:       2,
+			Enabled:     true,
+		},
 	}
 }
 

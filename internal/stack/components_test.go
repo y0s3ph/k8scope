@@ -6,8 +6,8 @@ import (
 
 func TestForModeStartup(t *testing.T) {
 	components := ForMode("startup", nil)
-	if len(components) == 0 {
-		t.Fatal("expected at least one component for startup mode")
+	if len(components) < 2 {
+		t.Fatalf("expected at least 2 components for startup mode, got %d", len(components))
 	}
 
 	prom := components[0]
@@ -20,11 +20,16 @@ func TestForModeStartup(t *testing.T) {
 	if !prom.Enabled {
 		t.Error("expected Prometheus to be enabled")
 	}
-	if prom.ChartPath != "charts/kube-prometheus-stack" {
-		t.Errorf("unexpected chart path: %s", prom.ChartPath)
+
+	grafana := components[1]
+	if grafana.Name != "Grafana" {
+		t.Errorf("expected second component to be Grafana, got %s", grafana.Name)
 	}
-	if prom.ValuesPath != "values/startup/prometheus.yaml" {
-		t.Errorf("unexpected values path: %s", prom.ValuesPath)
+	if grafana.ReleaseName != "k8scope-grafana" {
+		t.Errorf("unexpected release name: %s", grafana.ReleaseName)
+	}
+	if grafana.ValuesPath != "values/startup/grafana.yaml" {
+		t.Errorf("unexpected values path: %s", grafana.ValuesPath)
 	}
 }
 
