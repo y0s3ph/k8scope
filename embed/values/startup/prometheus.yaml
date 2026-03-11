@@ -1,3 +1,5 @@
+fullnameOverride: k8scope-prom
+
 prometheus:
   prometheusSpec:
     replicas: 1
