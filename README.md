@@ -77,13 +77,13 @@ k8scope deploys a hybrid observability architecture where Prometheus handles Kub
 flowchart LR
     Apps["🖥️ Applications"]
     K8s["☸️ K8s Infrastructure"]
-    OTel["OpenTelemetry\nCollector"]
+    OTel["OpenTelemetry Collector"]
     Prom["Prometheus"]
     Loki["Loki"]
-    Tempo["Tempo\n(roadmap)"]
+    Tempo["Tempo"]
     Grafana["📊 Grafana"]
     AM["Alertmanager"]
-    Notify["📢 Slack / PagerDuty\n/ Email"]
+    Notify["📢 Slack / PagerDuty / Email"]
 
     Apps -- "OTLP" --> OTel
     OTel -- "remote write" --> Prom
