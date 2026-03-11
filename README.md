@@ -1,5 +1,12 @@
 # k8scope
 
+[![CI](https://github.com/y0s3ph/k8scope/actions/workflows/ci.yaml/badge.svg)](https://github.com/y0s3ph/k8scope/actions/workflows/ci.yaml)
+[![Release](https://github.com/y0s3ph/k8scope/actions/workflows/release.yaml/badge.svg)](https://github.com/y0s3ph/k8scope/actions/workflows/release.yaml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/y0s3ph/k8scope)](https://goreportcard.com/report/github.com/y0s3ph/k8scope)
+[![GitHub release](https://img.shields.io/github/v/release/y0s3ph/k8scope)](https://github.com/y0s3ph/k8scope/releases/latest)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/y0s3ph/k8scope)](go.mod)
+[![License](https://img.shields.io/github/license/y0s3ph/k8scope)](LICENSE)
+
 **Opinionated observability stack for Kubernetes.**
 
 Deploy Prometheus, Grafana, Loki, Alertmanager, and OpenTelemetry Collector with battle-tested defaults in one command. Stop spending days configuring YAML — start observing your cluster in minutes.
